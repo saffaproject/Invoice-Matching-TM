@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Mama - Invoice Matching Web</title>
+    <style>
+        /* --- GLOBAL STYLES --- */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* --- LOGIN PAGE --- */
+        #login-page { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-container { background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 15px; }
+        .form-group-login { margin-bottom: 20px; text-align: left; }
+        .form-group-login label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px; }
+        .form-group-login input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .login-btn { background-color: #008a38; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        /* --- DASHBOARD LAYOUT --- */
+        #dashboard-page { display: none; height: 100vh; background-color: #ffffff; }
+
+        /* SIDEBAR STYLES */
+        .sidebar { width: 250px; background-color: #e5e4e2; border-right: 1px solid #ccc; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 20px 15px 15px; text-align: center; }
+        .helpdesk-info { font-size: 11px; color: #333; margin-top: 15px; line-height: 1.5; font-weight: 500; }
+        .company-box { background-color: #ebd499; padding: 15px 10px; font-weight: bold; font-size: 13px; color: #333; text-align: left; border-top: 1px solid #dcb560; border-bottom: 1px solid #dcb560; }
+        .sidebar-menu { flex-grow: 1; background-color: #fff; overflow-y: auto; }
+        .menu-title { padding: 10px 15px; font-size: 13px; font-weight: bold; color: #333; border-bottom: 1px solid #eee; }
+        .menu-group-header { padding: 12px 15px; font-size: 12px; color: #444; cursor: pointer; border-bottom: 1px solid #eee; }
+        
+        .menu-item { padding: 10px 15px 10px 35px; font-size: 12px; color: #666; display: block; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
+        .menu-item:hover { background-color: #f0f0f0; }
+        .menu-item.active { background-color: #e6f2ff; color: #333; font-weight: 600; border-left: 3px solid #0056b3; }
+
+        /* MAIN CONTENT STYLES */
+        .main-content { flex-grow: 1; padding: 30px 40px; overflow-y: auto; position: relative; }
+        h2 { font-size: 22px; font-weight: 600; color: #2c3e50; margin-top: 0; margin-bottom: 30px; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 12px; color: #7f8c8d; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select { padding: 8px 12px; border: 1px solid #dce1e4; border-radius: 4px; font-size: 13px; font-family: inherit; }
+        
+        .form-group input:disabled, button:disabled { background-color: #f4f6f7 !important; color: #a6b0b5 !important; border-color: #eef0f1; cursor: not-allowed; }
+        .autofill-input { background-color: #f4f6f7; color: #7f8c8d; border: 1px solid #eef0f1; cursor: not-allowed; font-style: italic; }
+        
+        .w-small { width: 140px; } .w-medium { width: 220px; } .w-large { width: 280px; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 15px; border: 1px solid #eaeced; }
+        th, td { text-align: left; padding: 12px; font-size: 12px; color: #444; }
+        th { border-bottom: 1px solid #eaeced; font-weight: 600; background-color: #fbfcfc; }
+        tbody tr { cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background-color: #f5f7f9; }
+        tbody tr.selected { background-color: #e6f2ff; }
+
+        .btn-sm { padding: 6px 12px; background-color: #f1f4f6; border: 1px solid #dcdde1; border-radius: 4px; font-size: 12px; cursor: pointer; margin-right: 5px; color: #333; }
+        .main-actions { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+        .btn { padding: 8px 20px; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 600; border: none; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #008a38; color: white; }
+        .btn-outline { background-color: transparent; color: #007bff; border: 1px solid transparent; font-weight: 600;}
+        .btn-outline:hover:not(:disabled) { text-decoration: underline; }
+
+        /* --- MODAL STYLES --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 600px; max-width: 90%; }
+        .modal-box.small { width: 350px; text-align: center; }
+        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #333; }
+        .textarea-box { width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; background-color: #f8f9fa; border-radius: 4px; font-size: 12px; color: #555; resize: none; margin-bottom: 10px; font-family: monospace; }
+        .success-banner { display: none; background-color: #007d40; color: white; padding: 12px 20px; border-radius: 4px; text-align: center; font-weight: 500; margin: 40px auto; width: max-content; }
+        .text-red { color: #d32f2f; font-size: 12px; margin-top: 20px; margin-bottom: 10px; font-weight: 500; }
+
+        /* --- PDF PREVIEW MODAL STYLES --- */
+        .pdf-viewer-container { width: 85%; height: 90vh; background-color: #525659; display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .pdf-toolbar { background-color: #323639; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .pdf-toolbar-center { display: flex; gap: 15px; align-items: center; }
+        .pdf-toolbar-right { display: flex; gap: 15px; cursor: pointer; }
+        .pdf-content-area { flex-grow: 1; overflow-y: auto; display: flex; justify-content: center; padding: 30px; }
+        .pdf-paper { background-color: white; width: 210mm; min-height: 297mm; padding: 40px 50px; box-shadow: 0 0 10px rgba(0,0,0,0.3); font-family: 'Times New Roman', Times, serif; color: black; box-sizing: border-box; }
+        .pdf-header { text-align: center; font-size: 24px; font-weight: normal; margin-bottom: 30px; border-bottom: 1px solid black; padding-bottom: 5px; position: relative; }
+        .pdf-header::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 100%; height: 1px; background-color: black; }
+        .pdf-info-row { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; }
+        .pdf-barcode { font-size: 30px; letter-spacing: -2px; font-family: monospace; display: flex; flex-direction: column; align-items: center; }
+        .pdf-barcode span { font-size: 12px; letter-spacing: 0; margin-top: 5px; }
+        .pdf-text { font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+        .pdf-list { font-size: 14px; margin-bottom: 30px; line-height: 1.6; padding-left: 20px; }
+        .pdf-summary-table { font-size: 14px; margin-left: 40px; margin-bottom: 40px; }
+        .pdf-summary-table td { padding: 4px 10px; border: none; }
+        .pdf-close-btn { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HALAMAN LOGIN -->
+    <div id="login-page">
+        <div class="login-container">
+            <!-- Logo Toko Mama menggunakan Link Eksternal -->
+            <img src="https://cdn.pintarnya.com/images/employer/logo_tanpa_background_1750821689.png" alt="Toko Mama" style="max-width: 250px; margin-bottom: 10px;">
+            <div class="subtitle">Invoice Matching Web (IMW)</div>
+            
+            <form id="login-form">
+                <div class="form-group-login">
+                    <label>Vendor Code / Username</label>
+                    <input type="text" placeholder="Masukkan Username bebas" required>
+                </div>
+                <div class="form-group-login">
+                    <label>Password</label>
+                    <input type="password" placeholder="Masukkan Password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. HALAMAN UTAMA (DASHBOARD) -->
+    <div id="dashboard-page">
+        
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <!-- Logo Toko Mama menggunakan Link Eksternal -->
+                <img src="https://cdn.pintarnya.com/images/employer/logo_tanpa_background_1750821689.png" alt="Toko Mama" style="max-width: 160px; margin-bottom: 10px;">
+                <div class="helpdesk-info">Helpdesk Toko Mama Pusat<br>021-5469333 ext 9450, 9943<br>email : match@tokomama.co.id</div>
+            </div>
+            <div class="company-box">DUMMY</div>
+            <div class="sidebar-menu">
+                <div class="menu-title">Menu <span>&#9652;</span></div>
+                <div class="menu-group-header">Invoice Matching</div>
+                
+                <div class="menu-item active" id="menu_input_invoice" onclick="navigateMenu('input_invoice')">Input Invoice / F. Pajak</div>
+                
+                <div class="menu-group-header">Hasil</div>
+                <div class="menu-item" id="menu_hasil_matching" onclick="navigateMenu('hasil_matching')">Hasil Matching</div>
+                <div class="menu-group-header">Keluar</div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="main-content">
+            
+            <!-- VIEW A: INPUT INVOICE -->
+            <div id="view-input-invoice">
+                <h2>Input Invoice / Faktur Pajak</h2>
+                <div class="form-row">
+                    <div class="form-group"><label>No PO</label><input type="text" id="input_po" class="w-small" placeholder="Ketik lalu Enter"></div>
+                    <div class="form-group"><label>Toko/DC</label><input type="text" id="input_dc" class="w-small" placeholder="Ketik lalu Enter"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group"><label>No Invoice</label><input type="text" id="main_no_invoice" class="w-medium locked-field" disabled></div>
+                    <div class="form-group"><label>Tanggal Invoice</label><input type="date" id="main_tgl_invoice" class="w-medium locked-field" disabled></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Buy Cost</label><input type="text" id="main_buy_cost" class="w-medium locked-field" disabled></div>
+                    <div class="form-group"><label>PPn BM</label><input type="text" id="main_ppnbm" class="w-medium locked-field" disabled></div>
+                    <div class="form-group"><label>No NPWP</label><input type="text" class="w-large locked-field" disabled></div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Serial Number</th><th>VAT Date</th><th>PPN Cost</th><th>BM Cost</th></tr></thead>
+                    <tbody id="main_tax_tbody"><tr id="empty_row"><td height="80"></td><td></td><td></td><td></td></tr></tbody>
+                </table>
+
+                <div style="margin-bottom: 30px;">
+                    <button class="btn-sm locked-btn" disabled onclick="openAddTaxModal()">Add Tax</button>
+                    <button class="btn-sm locked-btn" disabled style="color: #d32f2f;" onclick="deleteTaxGrid()">Delete Tax</button>
+                </div>
+
+                <div class="main-actions">
+                    <button class="btn btn-primary locked-btn" disabled onclick="goToCurrentBatch()">OK</button>
+                    <button class="btn btn-outline locked-btn" disabled>OK & Next</button>
+                    <button class="btn btn-outline locked-btn" disabled>Clear</button>
+                    <button class="btn btn-outline locked-btn" disabled>Cancel</button>
+                </div>
+            </div>
+
+            <!-- VIEW B: CURRENT BATCH -->
+            <div id="view-current-batch" style="display: none;">
+                <h2>Current Batch</h2>
+                
+                <div class="form-row">
+                    <div class="form-group"><label>Supplier</label><input type="text" class="w-medium" value="Dummy(12552)" disabled></div>
+                    <div class="form-group"><label>User ID</label><input type="text" class="w-small" value="12552" disabled></div>
+                </div>
+
+                <div id="success-message" class="success-banner">Matching document has been submitted</div>
+
+                <div id="batch-table-area">
+                    <table id="batch-table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th><th>Loc</th><th>Invoice</th><th>Act BuyCost</th><th>Act PPnBm</th><th>Sum PPnCost</th><th>Sum PPnBm</th><th>Supplier#</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batch-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="text-red">Untuk submit bisa beberapa PO/Invoice sekaligus</div>
+                
+                <div class="main-actions" id="batch-actions">
+                    <button class="btn btn-primary">Add/Edit</button>
+                    <button class="btn btn-outline">Cancel</button>
+                    <button class="btn btn-outline">Refresh</button>
+                    <button class="btn btn-success" onclick="openConfirmModal()">Submit</button>
+                </div>
+            </div>
+
+            <!-- VIEW C: PRINT SELECTION (Saat Klik Menu Hasil Matching Awal) -->
+            <div id="view-print-selection" style="display: none;">
+                <h2>Print Selection</h2>
+                
+                <div class="form-row">
+                    <div class="form-group"><label>Supplier</label><input type="text" class="w-medium" value="Dummy(12552)" disabled style="background-color: #fff !important;"></div>
+                    <div class="form-group"><label>User ID</label><input type="text" class="w-small" value="12552" disabled style="background-color: #fff !important;"></div>
+                    <div class="form-group"><label>Batch Number</label><input type="text" class="w-small" value="INV1000031" disabled style="background-color: #fff !important;"></div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th><th>Order#</th><th>Loc</th><th>Invoice#</th><th>Buy Cost</th><th>PPN BM</th><th>PPN Cost</th><th>BM Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="print-checkbox"></td>
+                            <td>6044120</td><td>110</td><td>20260313</td><td>92,000,000</td><td>0</td><td>10,000,000</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="print-checkbox"></td>
+                            <td>7138460</td><td>110</td><td>20260313</td><td>41,000,000</td><td>0</td><td>4,000,000</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="print-checkbox"></td>
+                            <td>7138462</td><td>110</td><td>20260313</td><td>14,000,000</td><td>0</td><td>1,000,000</td><td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="form-row" style="margin-top: 30px; align-items: flex-end;">
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="text" id="input_print_total" class="w-small" placeholder="Ketik Total & Enter" onkeypress="autoFillConfirmTotal(event)">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Total</label>
+                        <input type="text" id="input_confirm_total" class="w-small autofill-input" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Penandatangan</label>
+                        <input type="text" id="input_nama_ttd" class="w-medium" style="border: 1px solid #007bff;">
+                    </div>
+                </div>
+
+                <div class="main-actions">
+                    <button class="btn btn-outline" style="border: 1px solid #ccc; color: #333;" onclick="selectAllPrint()">Select All</button>
+                    <button class="btn btn-primary" onclick="openPdfPreview()">Finalize</button>
+                    <button class="btn btn-outline">Cancel</button>
+                </div>
+            </div>
+
+            <!-- VIEW D: HASIL MATCHING LIST (Muncul setelah PDF di-close) -->
+            <div id="view-hasil-matching-list" style="display: none;">
+                <h2>Hasil Matching</h2>
+                
+                <div class="form-row" style="align-items: flex-end;">
+                    <div class="form-group"><label>Supplier</label><input type="text" class="w-medium" value="Dummy(12552)" disabled style="background-color: #fff !important;"></div>
+                    <div class="form-group"><label>User ID</label><input type="text" class="w-small" value="12552" disabled style="background-color: #fff !important;"></div>
+                    <div class="form-group">
+                        <label>Filter</label>
+                        <select class="w-small">
+                            <option>Minggu ini</option>
+                            <option>Bulan ini</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Search</label><input type="text" class="w-medium" placeholder="Search invoice.."></div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Batch</th><th>Order#</th><th>Loc</th><th>Invoice#</th><th>Buy Cost</th><th>PPN BM</th><th>Status</th><th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected">
+                            <td>INV1000031</td><td>6044120</td><td>110</td><td>20260313</td><td>92,000,000</td><td>0</td><td>Print</td><td></td>
+                        </tr>
+                        <tr>
+                            <td>INV1000031</td><td>7138460</td><td>110</td><td>20260313</td><td>41,000,000</td><td>0</td><td>Print</td><td></td>
+                        </tr>
+                        <tr>
+                            <td>INV1000031</td><td>7138462</td><td>110</td><td>20260313</td><td>14,000,000</td><td>0</td><td>Print</td><td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="main-actions">
+                    <button class="btn btn-primary">Refresh</button>
+                    <button class="btn btn-primary">Request Detail</button>
+                    <button class="btn btn-primary">Batch Print</button>
+                    <button class="btn btn-success" onclick="window.location.href='toko mama upload.html'">Upload Dokumen</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================== MODALS AREA ================== -->
+
+    <!-- MODAL 1: ADD TAX -->
+    <div id="modal-add-tax" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">Input Faktur Pajak</div>
+            <div class="form-row">
+                <div class="form-group"><label>Order Number</label><input type="text" id="modal_po" class="w-small" readonly style="background:#fff;"></div>
+                <div class="form-group"><label>Location</label><input type="text" id="modal_dc" class="w-small" readonly style="background:#fff;"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>No Seri Faktur Pajak</label><input type="text" class="w-medium autofill-input" value="<autofill>" readonly></div>
+                <div class="form-group"><label>Tanggal Faktur</label><input type="text" class="w-small autofill-input" value="<autofill>" readonly></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Nilai PPN</label><input type="text" class="w-small autofill-input" value="<autofill>" readonly></div>
+                <div class="form-group"><label>Nilai PPnBm</label><input type="text" class="w-small autofill-input" value="<autofill>" readonly></div>
+                <div class="form-group"><label>No NPWP</label><input type="text" class="w-medium autofill-input" value="<autofill>" readonly></div>
+            </div>
+            <p style="font-size: 13px; color: #333; margin-top:20px;">Paste data dari efaktur/coretax/QR lalu klik Process</p>
+            <textarea id="csv-data" class="textarea-box">DUMMY COMPANY 8 TBK#0010017010058888#MATAHARI PUTRA PRIMA TBK#0013940135092000#04002500286882141#12-01-2026#84.000.000,00#10.000.000,00#0,00#APPROVED</textarea>
+            <div style="margin-bottom: 20px;"><button class="btn-sm">Upload File...</button> <span style="font-size:12px; color:#888;">↑ Drop file here</span></div>
+            <div class="main-actions" style="justify-content: flex-start; margin-top: 0; align-items: center;">
+                <button class="btn btn-outline" style="border:1px solid #ccc; color:#333;" onclick="processCSV()">Process CSV/QR</button>
+                <button class="btn btn-primary" id="btn_modal_ok" disabled onclick="saveTaxAndPopulate()">OK</button>
+                <button class="btn btn-outline" id="btn_modal_ok_next" disabled onclick="okAndNext()">OK & Next</button>
+                <button class="btn btn-outline" onclick="clearTextarea()">Clear</button>
+                <button class="btn btn-outline" onclick="closeModal('modal-add-tax')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CONFIRMATION -->
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal-box small">
+            <div class="modal-title" style="margin-bottom: 10px;">Confirmation</div>
+            <p style="font-size: 14px; color: #333; margin-bottom: 25px;">Apakah sudah yakin yang diinput sudah benar semua?<br>Klik OK untuk submit</p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-outline" onclick="closeModal('modal-confirm')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitFinal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PDF PREVIEW SURAT JALAN -->
+    <div id="modal-pdf-preview" class="modal-overlay">
+        <div class="pdf-viewer-container">
+            <!-- Toolbar PDF -->
+            <div class="pdf-toolbar">
+                <div>Surat_Jalan_INV1000031.pdf</div>
+                <div class="pdf-toolbar-center">
+                    <span>1 / 1</span><span>|</span><span>-</span><span>90%</span><span>+</span>
+                </div>
+                <div class="pdf-toolbar-right">
+                    <span>Download</span><span>Print</span>
+                    <button class="pdf-close-btn" onclick="closePdfPreview()">✖</button>
+                </div>
+            </div>
+            
+            <!-- Kertas Surat Jalan -->
+            <div class="pdf-content-area">
+                <div class="pdf-paper">
+                    <div class="pdf-header">Surat Jalan</div>
+                    <div class="pdf-info-row">
+                        <div>
+                            <table>
+                                <tr><td style="padding:0 20px 0 0;">PT</td><td>: Dummy</td></tr>
+                                <tr><td style="padding:0 20px 0 0;">Tanggal</td><td>: 13 March 2026</td></tr>
+                            </table>
+                        </div>
+                        <div class="pdf-barcode">
+                            ||| | |||| | ||| ||<br><span>INV1000031</span>
+                        </div>
+                    </div>
+                    <div class="pdf-text">
+                        Bersama ini kami kirimkan dokumen-dokumen berikut untuk proses pembayaran oleh<br>
+                        PT. Matahari Putra Prima Tbk.
+                    </div>
+                    <div class="pdf-list">
+                        1. Invoice Asli + Stempel toko Asli<br>
+                        2. Faktur Pajak Standar Asli + 1 Lembar Copy<br>
+                        3. Purchase Order Copy + Asli Stempel Toko<br>
+                        4. Kwitansi + Materai
+                    </div>
+                    <table class="pdf-summary-table">
+                        <tr><td>Supplier Number</td><td>: 12552</td></tr>
+                        <tr><td>Batch Number</td><td>: INV1000031</td></tr>
+                        <tr><td>Total Invoice</td><td>: 147,000,000.00</td></tr>
+                        <tr><td>Total PPn</td><td>: 15,000,000.00</td></tr>
+                        <tr><td>Jumlah PO</td><td>: 3</td></tr>
+                    </table>
+                    <div class="pdf-text">
+                        Demikian surat jalan ini dapat segera memproses pembayaran.<br>Terima Kasih.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================== JAVASCRIPT LOGIC ================== -->
+    <script>
+        // --- 1. Navigation & Basic Logic ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'flex';
+            document.getElementById('input_po').focus();
+        });
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                document.querySelectorAll('.locked-field, .locked-btn').forEach(el => el.disabled = false);
+            }
+        }
+        document.getElementById('input_po').addEventListener('keypress', checkEnter);
+        document.getElementById('input_dc').addEventListener('keypress', checkEnter);
+
+        // Sidebar Navigation
+        function navigateMenu(menuId) {
+            document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-input-invoice').style.display = 'none';
+            document.getElementById('view-current-batch').style.display = 'none';
+            document.getElementById('view-print-selection').style.display = 'none';
+            document.getElementById('view-hasil-matching-list').style.display = 'none';
+            
+            if (menuId === 'input_invoice') {
+                document.getElementById('menu_input_invoice').classList.add('active');
+                document.getElementById('view-input-invoice').style.display = 'block';
+            } else if (menuId === 'hasil_matching') {
+                document.getElementById('menu_hasil_matching').classList.add('active');
+                // Awal klik Menu Hasil Matching masuk ke Print Selection
+                document.getElementById('view-print-selection').style.display = 'block';
+            }
+        }
+
+        // --- 2. Add Tax Modal Logic ---
+        function openAddTaxModal() {
+            let poVal = document.getElementById('input_po').value || "123";
+            let dcVal = document.getElementById('input_dc').value || "110";
+            document.getElementById('modal_po').value = poVal;
+            document.getElementById('modal_dc').value = dcVal;
+            document.getElementById('csv-data').value = "DUMMY COMPANY 8 TBK#0010017010058888#MATAHARI PUTRA PRIMA TBK#0013940135092000#04002500286882141#12-01-2026#84.000.000,00#10.000.000,00#0,00#APPROVED";
+            document.getElementById('btn_modal_ok').disabled = true;
+            document.getElementById('btn_modal_ok_next').disabled = true;
+            document.getElementById('modal-add-tax').style.display = 'flex';
+        }
+
+        function processCSV() {
+            let textarea = document.getElementById('csv-data');
+            if (textarea.value.trim() !== "") {
+                textarea.value = "tax data loaded";
+                document.getElementById('btn_modal_ok').disabled = false;
+                document.getElementById('btn_modal_ok_next').disabled = false;
+            }
+        }
+
+        function okAndNext() {
+            document.getElementById('csv-data').value = "";
+            document.getElementById('csv-data').focus();
+            document.getElementById('btn_modal_ok').disabled = true;
+            document.getElementById('btn_modal_ok_next').disabled = true;
+        }
+
+        function clearTextarea() {
+            document.getElementById('csv-data').value = "";
+            document.getElementById('csv-data').focus();
+            document.getElementById('btn_modal_ok').disabled = true;
+            document.getElementById('btn_modal_ok_next').disabled = true;
+        }
+
+        function deleteTaxGrid() {
+            document.getElementById('main_tax_tbody').innerHTML = '<tr id="empty_row"><td height="80"></td><td></td><td></td><td></td></tr>';
+        }
+
+        function saveTaxAndPopulate() {
+            closeModal('modal-add-tax');
+            document.getElementById('main_no_invoice').value = "20260313";
+            document.getElementById('main_tgl_invoice').value = "2026-03-13"; 
+            document.getElementById('main_buy_cost').value = "92,000,000";
+            document.getElementById('main_ppnbm').value = "0";
+            document.getElementById('main_tax_tbody').innerHTML = `
+                <tr style="background-color: #e6f2ff;">
+                    <td>04002500286882141</td><td>12-01-2026</td><td>10000000</td><td>0</td>
+                </tr>`;
+        }
+
+        // --- 3. Current Batch Logic ---
+        function goToCurrentBatch() {
+            document.getElementById('view-input-invoice').style.display = 'none';
+            document.getElementById('view-current-batch').style.display = 'block';
+            let poVal = document.getElementById('input_po').value || "123";
+            let dcVal = document.getElementById('input_dc').value || "110";
+            document.getElementById('batch-tbody').innerHTML = `
+                <tr onclick="selectRow(this)"><td>${poVal}</td><td>${dcVal}</td><td>20260313</td><td>92,000,000</td><td>0</td><td>10,000,000</td><td>0</td><td>12552</td></tr>
+                <tr onclick="selectRow(this)"><td>7138460</td><td>110</td><td>20260313</td><td>41,000,000</td><td>0</td><td>4,000,000</td><td>0</td><td>12552</td></tr>
+                <tr onclick="selectRow(this)"><td>7138462</td><td>110</td><td>20260313</td><td>14,000,000</td><td>0</td><td>1,000,000</td><td>0</td><td>12552</td></tr>
+            `;
+        }
+
+        function selectRow(rowElement) {
+            let tbody = rowElement.closest('tbody');
+            tbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+            rowElement.classList.add('selected');
+        }
+
+        function openConfirmModal() { document.getElementById('modal-confirm').style.display = 'flex'; }
+        function submitFinal() {
+            closeModal('modal-confirm');
+            document.getElementById('batch-table-area').style.display = 'none';
+            document.getElementById('success-message').style.display = 'block';
+        }
+
+        // --- 4. Hasil Matching (Print Selection) Logic ---
+        let allSelected = false;
+        function selectAllPrint() {
+            let checkboxes = document.querySelectorAll('.print-checkbox');
+            allSelected = !allSelected;
+            checkboxes.forEach(cb => cb.checked = allSelected);
+        }
+
+        function autoFillConfirmTotal(event) {
+            if (event.key === 'Enter') {
+                let totalValue = document.getElementById('input_print_total').value;
+                let pureNumber = totalValue.replace(/,/g, ''); 
+                document.getElementById('input_confirm_total').value = pureNumber;
+            }
+        }
+
+        function openPdfPreview() {
+            let nama = document.getElementById('input_nama_ttd').value;
+            if(!nama) {
+                alert("Harap isi Nama Penandatangan terlebih dahulu!");
+                return;
+            }
+            document.getElementById('modal-pdf-preview').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // --- 5. Logic Saat Pop up PDF Di-close (Pindah ke Hasil Matching List) ---
+        function closePdfPreview() {
+            closeModal('modal-pdf-preview');
+            document.getElementById('view-print-selection').style.display = 'none';
+            document.getElementById('view-hasil-matching-list').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

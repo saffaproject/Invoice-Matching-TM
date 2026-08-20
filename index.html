@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Matching - Panduan Penggunaan</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f9;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling (Toko Mama Theme) */
+        .sidebar {
+            width: 240px;
+            background-color: #1e2d40;
+            color: #fff;
+            padding-top: 20px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            padding: 10px 20px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a3c54;
+            background-color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-brand img {
+            max-width: 160px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #a3b8cc;
+            text-decoration: none;
+            font-size: 14px;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .sidebar-menu li.active a, .sidebar-menu li a:hover {
+            background-color: #008a38;
+            color: white;
+            border-left: 4px solid #005624;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .navbar {
+            height: 50px;
+            background-color: #008a38;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .container {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+            background-color: #fff;
+        }
+
+        /* Styling Konten Panduan */
+        .content-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+        }
+
+        .helpdesk-box {
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            width: 250px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .helpdesk-box img {
+            max-width: 130px;
+            margin-bottom: 15px;
+        }
+
+        .helpdesk-text {
+            font-size: 12px;
+            color: #595959;
+            line-height: 1.6;
+        }
+
+        .helpdesk-text .email {
+            color: #008a38;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .welcome-text h1 {
+            font-size: 24px;
+            color: #008a38;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text h2 {
+            font-size: 22px;
+            color: #008a38;
+        }
+
+        .guide-section {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .guide-section ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .guide-section > ul > li {
+            margin-bottom: 12px;
+        }
+
+        .guide-section ul ul {
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        .note-box {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding: 20px;
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .note-box h3 {
+            font-size: 15px;
+            color: #262626;
+            margin-bottom: 10px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .note-box li {
+            margin-bottom: 8px;
+        }
+
+        .guide-links {
+            margin-top: 20px;
+            border-top: 1px dashed #d9d9d9;
+            padding-top: 15px;
+        }
+
+        .guide-links p {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .guide-links a {
+            color: #008a38;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .guide-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Kiri -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="https://cdn.pintarnya.com/images/employer/logo_tanpa_background_1750821689.png" alt="Toko Mama">
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-book"></i> Panduan Penggunaan</a></li>
+            <li><a href="toko mama upload.html"><i class="fa-solid fa-upload"></i> Upload Document</a></li>
+            <li><a href="#"><i class="fa-solid fa-circle-check"></i> Hasil Matching <i class="fa-solid fa-chevron-down" style="float:right; font-size:10px; margin-top:5px;"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Upload File Kwitansi</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Kanan -->
+    <div class="main-content">
+        <div class="navbar">
+            <span><i class="fa-solid fa-bars" style="margin-right: 15px; cursor: pointer;"></i> Invoice Matching</span>
+            <span style="font-size:13px; font-weight:normal;"><i class="fa-solid fa-user"></i> 12552 <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 5px;"></i></span>
+        </div>
+
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+                
+                <!-- Header Banner / Logo Info -->
+                <div class="content-header">
+                    <div class="helpdesk-box">
+                        <img src="https://cdn.pintarnya.com/images/employer/logo_tanpa_background_1750821689.png" alt="Toko Mama">
+                        <div class="helpdesk-text">
+                            <p style="font-weight: bold; color: #333;">Helpdesk Toko Mama Pusat</p>
+                            <p>021-5469333 ext 9450, 9943</p>
+                            <p class="email">email : match@tokomama.co.id</p>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-text">
+                        <h1>Selamat datang di Portal Upload Dokumen Invoice</h1>
+                        <h2>Matching TOKO MAMA PUSAT</h2>
+                    </div>
+                </div>
+
+                <!-- Instructions Intro -->
+                <div class="guide-section">
+                    <p style="font-weight: bold;">Mohon dibaca seluruh petunjuk dibawah ini :</p>
+                    <ul>
+                        <li>Pastikan perangkat Anda (komputer, laptop, atau tablet) telah terhubung ke jaringan internet yang stabil. Koneksi yang tidak stabil dapat menyebabkan proses upload gagal atau terganggu.</li>
+                        <li>Harap pastikan setiap dokumen yang akan diunggah memenuhi kriteria berikut:
+                            <ul>
+                                <li><strong>Format file:</strong> Wajib dalam format <strong>PDF</strong>. Sistem tidak menerima format lain seperti JPEG, PNG, atau Word.</li>
+                                <li><strong>Ukuran file:</strong> Maksimal <strong>2 MB</strong> per file. Dokumen yang melebihi batas ukuran tidak dapat diunggah.</li>
+                                <li><strong>Kualitas scan:</strong> Dokumen harus dipindai dalam posisi tegak (tidak miring atau terbalik), dengan hasil yang fokus dan teks terbaca jelas.</li>
+                            </ul>
+                        </li>
+                        <li>Pilih menu <strong>Upload Dokumen</strong>, lalu klik tombol Nomor PO (Purchase Order) yang sesuai dengan dokumen penagihan Anda, kemudian unggah file PDF ke dalam sistem.</li>
+                    </ul>
+                </div>
+
+                <!-- Note Box (Yellow Callout) -->
+                <div class="note-box">
+                    <h3><i class="fa-solid fa-circle-exclamation" style="color: #faad14;"></i> Catatan Penting:</h3>
+                    <ul>
+                        <li>Dokumen yang tidak jelas, buram, miring, atau terpotong akan ditolak secara otomatis oleh sistem.</li>
+                        <li>Apabila mengalami kendala teknis, segera hubungi tim support melalui kontak yang tersedia di halaman portal.</li>
+                    </ul>
+                    
+                    <div class="guide-links">
+                        <p>Link Bantuan :</p>
+                        <ul>
+                            <li><a href="#"><i class="fa-solid fa-download"></i> Download Buku Panduan (PDF)</a></li>
+                            <li><a href="#"><i class="fa-solid fa-play-circle"></i> Tonton Video Tutorial Penggunaan</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
