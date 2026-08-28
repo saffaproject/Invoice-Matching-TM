@@ -478,7 +478,7 @@
                 <div class="form-group-up">
                     <label><span>*</span> Delivery Note</label>
                     <input type="file" id="file-dn" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx" onchange="handleRealUpload(this, 'dn')">
-                    <div class="file-input-wrapper" id="dn-wrapper" onclick="document.getElementById('file-dn').click()">
+                    <div class="file-input-wrapper disabled" id="dn-wrapper">
                         <div class="file-input-text" id="dn-text">Choose file</div>
                         <i class="fa-regular fa-folder-open" id="dn-icon" style="color:#595959;"></i>
                     </div>
@@ -488,7 +488,7 @@
                 <div class="form-group-up">
                     <label><span>*</span> Faktur Pajak</label>
                     <input type="file" id="file-fp" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx" onchange="handleRealUpload(this, 'fp')">
-                    <div class="file-input-wrapper" id="fp-wrapper" onclick="document.getElementById('file-fp').click()">
+                    <div class="file-input-wrapper disabled" id="fp-wrapper">
                         <div class="file-input-text" id="fp-text">Choose files</div>
                         <i class="fa-regular fa-folder-open" id="fp-icon" style="color:#595959;"></i>
                     </div>
@@ -498,7 +498,7 @@
                 <div class="form-group-up">
                     <label><span>*</span> Invoice</label>
                     <input type="file" id="file-inv" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx" onchange="handleRealUpload(this, 'inv')">
-                    <div class="file-input-wrapper" id="inv-wrapper" onclick="document.getElementById('file-inv').click()">
+                    <div class="file-input-wrapper disabled" id="inv-wrapper">
                         <div class="file-input-text" id="inv-text">Choose file</div>
                         <i class="fa-regular fa-folder-open" id="inv-icon" style="color:#595959;"></i>
                     </div>
@@ -943,9 +943,10 @@
             grnWrapper.classList.add('disabled'); // Memberikan style disabled
             grnWrapper.style.cursor = 'not-allowed';
 
-            resetUploadUI('dn', 'Choose file'); 
-            resetUploadUI('fp', 'Choose files'); 
-            resetUploadUI('inv', 'Choose file');
+            // MENGUNCI DN, FP, INV SECARA DEFAULT SAAT AWAL MODAL DIBUKA
+            resetUploadUIDisabled('dn', 'Choose file'); 
+            resetUploadUIDisabled('fp', 'Choose files'); 
+            resetUploadUIDisabled('inv', 'Choose file');
             
             document.getElementById('pdf-accept-cb').checked = false;
             document.getElementById('btn-pdf-ok').disabled = true;
@@ -968,6 +969,33 @@
             if(iconEl) iconEl.style.display = 'inline-block';
             statusIcon.innerHTML = '';
             statusIcon.className = 'status-icon';
+        }
+
+        // FUNGSI BARU UNTUK MERESET DAN MEN-DISABLE UPLOAD DI AWAL
+        function resetUploadUIDisabled(id, text) {
+            const wrapper = document.getElementById(id + '-wrapper');
+            const textEl = document.getElementById(id + '-text');
+            const iconEl = document.getElementById(id + '-icon');
+            const statusIcon = document.getElementById(id + '-status-icon');
+            
+            wrapper.classList.add('disabled'); 
+            wrapper.removeAttribute('onclick');
+            wrapper.style.cursor = 'not-allowed';
+            
+            textEl.innerText = text;
+            textEl.classList.remove('verified-style'); 
+            textEl.style.color = '#bfbfbf';
+            
+            wrapper.style.backgroundColor = '#f5f5f5'; 
+            wrapper.style.justifyContent = 'space-between'; 
+            wrapper.style.border = '1px solid #dce1e4';
+            
+            if(!iconEl) {
+                const folderIcon = document.createElement('i'); folderIcon.className = "fa-regular fa-folder-open";
+                folderIcon.id = id + "-icon"; folderIcon.style.color = "#595959"; wrapper.appendChild(folderIcon);
+            }
+            statusIcon.innerHTML = ''; statusIcon.className = 'status-icon';
+            document.getElementById('file-' + id).value = ''; 
         }
 
         function resetUploadUI(id, text) {
@@ -1101,6 +1129,13 @@
                 grnWrapper.style.cursor = 'pointer';
                 grnWrapper.style.backgroundColor = '#fff';
                 grnWrapper.setAttribute('onclick', "openPDFViewer('GRN', '8077736')");
+            }
+            
+            // LOGIKA BARU: MENGAKTIFKAN DN, FP, INV JIKA GRN SELESAI DI-VERIFY
+            if (id === 'grn') {
+                resetUploadUI('dn', 'Choose file');
+                resetUploadUI('fp', 'Choose files');
+                resetUploadUI('inv', 'Choose file');
             }
 
             checkAllUploadsDone();
