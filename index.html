@@ -52,7 +52,6 @@
         .form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #dce1e4; border-radius: 4px; font-size: 13px; font-family: inherit; outline: none; height: 35px;}
         
         .form-group input:disabled, button:disabled { background-color: #f4f6f7 !important; color: #a6b0b5 !important; border-color: #eef0f1; cursor: not-allowed; }
-        .autofill-input { background-color: #f4f6f7; color: #7f8c8d; border: 1px solid #eef0f1; cursor: not-allowed; font-style: italic; }
         
         /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; border: 1px solid #eaeced; }
@@ -87,13 +86,9 @@
         .file-input-wrapper { flex: 1; display: flex; align-items: center; background-color: #fff; border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px 12px; cursor: pointer; transition: border-color 0.2s; justify-content: space-between; }
         .file-input-wrapper:hover:not(.disabled) { border-color: #008a38; }
         .file-input-wrapper.disabled { background-color: #f5f5f5 !important; cursor: not-allowed !important; border: 1px solid #d9d9d9 !important; }
-        
-        /* Style utk verified style yg bisa di click */
-        .file-input-wrapper.clickable-verified { background-color: #e6fdf2; border: 1px solid #84dcc6; cursor: pointer; justify-content: center;}
-        .file-input-wrapper.clickable-verified:hover { background-color: #ccf8e3; }
 
         .file-input-text { flex: 1; color: #bfbfbf; font-size: 13px; }
-        .file-input-text.verified-style { color: #008a38 !important; text-align: center; width: 100%; font-weight: 600;}
+        .file-input-text.verified-style { color: #595959 !important; text-align: center; width: 100%; font-weight: 600;}
         .status-icon { margin-left: 10px; font-size: 18px; width: 20px; display: flex; align-items: center; justify-content: center; }
         .status-success { color: #008a38; }
         .ketentuan-scrollable-container { flex: 1; overflow-y: auto; margin-top: 10px; padding-top: 15px; padding-right: 8px; border-top: 1px dashed #e8e8e8; max-height: 220px; }
@@ -385,6 +380,7 @@
         </div>
     </div>
 
+    <!-- MODAL INPUT & MANAGE FAKTUR PAJAK -->
     <div id="modal-add-tax" class="modal-overlay">
         <div class="modal-box" style="width: 900px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; padding: 25px 30px;">
             
@@ -395,26 +391,16 @@
 
             <div style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;">
                 
-                <div class="form-row" style="margin-bottom: 15px; gap: 15px; justify-content: space-between;">
+                <div class="form-row" style="margin-bottom: 20px; gap: 15px; justify-content: space-between;">
                     <div class="form-group" style="flex: 1;"><label>Order Number</label><input type="text" id="modal_po" readonly style="background:#f4f6f7; width: 100%; box-sizing: border-box;"></div>
                     <div class="form-group" style="flex: 1;"><label>Location</label><input type="text" id="modal_dc" readonly style="background:#f4f6f7; width: 100%; box-sizing: border-box;"></div>
-                    <div class="form-group" style="flex: 2;"><label>No Seri Faktur Pajak</label><input type="text" id="step1_serial" class="autofill-input" readonly style="width: 100%; box-sizing: border-box;"></div>
-                </div>
-                
-                <div class="form-row" style="margin-bottom: 20px; gap: 15px; justify-content: space-between;">
-                    <div class="form-group" style="flex: 1;"><label>Nilai PPN</label><input type="text" id="step1_ppn" class="autofill-input" readonly style="width: 100%; box-sizing: border-box;"></div>
-                    <div class="form-group" style="flex: 1;"><label>Nilai PPnBm</label><input type="text" id="step1_ppnbm" class="autofill-input" readonly style="width: 100%; box-sizing: border-box;"></div>
-                    <div class="form-group" style="flex: 1;"><label>Tanggal Faktur</label><input type="text" id="step1_tanggal" class="autofill-input" readonly style="width: 100%; box-sizing: border-box;"></div>
                 </div>
 
                 <div style="background-color: #f8f9fa; border: 1px solid #eaeced; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <label style="font-size: 13px; font-weight: 600; color: #333; margin: 0;">Paste data dari efaktur/coretax/QR :</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <span style="font-size: 12px; color: #888; margin-right: 5px;">atau</span>
-                            <button class="btn-sm" style="margin: 0; background: #fff; padding: 6px 12px; height: 30px;">Upload File...</button>
-                            <div style="width: 1px; height: 18px; background-color: #dce1e4; margin: 0 5px;"></div>
-                            <button class="btn btn-outline" style="border:1px solid #007bff; color:#007bff; padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="processCSV()">Process CSV/QR</button>
+                            <button class="btn btn-outline" style="border:1px solid #007bff; color:#007bff; padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="processCSV()">Process DATA</button>
                             <button class="btn btn-primary" id="btn_modal_ok" disabled style="padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="addTaxToGrid()">Add Tax</button>
                         </div>
                     </div>
@@ -449,6 +435,7 @@
         </div>
     </div>
 
+    <!-- MODAL UPLOAD DOKUMEN -->
     <div class="modal-overlay" id="modal-upload">
         <div class="upload-card-modal">
             <div class="card-header">
@@ -518,6 +505,7 @@
         </div>
     </div>
 
+    <!-- PDF VIEWER MODAL -->
     <div class="pdf-modal-overlay" id="pdf-viewer-modal">
         <div class="pdf-modal-box">
             <div class="pdf-toolbar">
@@ -596,7 +584,7 @@
         </div>
     </div>
 
-
+    <!-- GRID MODAL (DATA MATCHING ITEMS) -->
     <div class="grid-modal-overlay" id="grid-modal">
         <div class="grid-modal-box">
             <div class="grid-modal-header">
@@ -641,7 +629,7 @@
         </div>
     </div>
 
-
+    <!-- KWITANSI SUCCESS POPUP -->
     <div class="modal-overlay" id="kw-success-popup">
         <div class="modal-box" style="width: 450px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -659,6 +647,7 @@
         </div>
     </div>
 
+    <!-- DOWNLOAD MODAL -->
     <div class="modal-overlay" id="modal-download-files">
         <div class="modal-box" style="width: 850px; padding: 0;">
             <div style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eaeced;">
@@ -681,7 +670,7 @@
         </div>
     </div>
 
-    
+    <!-- GENERIC ALERT MODAL -->
     <div class="modal-overlay" id="generic-alert-modal" style="z-index: 6000;">
         <div class="modal-box" style="width: 400px; padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
             <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
@@ -696,7 +685,6 @@
     </div>
 
     <script>
-        // VARIABLE GLOBAL UNTUK SIMPAN NO PO DAN INVOICE
         let globalPo = "6044120";
         let globalInv = "3041513364";
 
@@ -717,8 +705,6 @@
         }
         document.getElementById('input_po').addEventListener('keypress', checkEnter);
 
-        
-        // ================== NUMBER FORMATTING ==================
         function formatNumberInput(input) {
             let value = input.value.replace(/\D/g, '');
             if (value !== '') {
@@ -727,8 +713,6 @@
             input.value = value;
         }
 
-        
-        // ================== ALERT MODAL LOGIC ==================
         let alertOkCallback = null;
         function showAlertModal(htmlContent, callback) {
             document.getElementById('alert-modal-body').innerHTML = htmlContent;
@@ -743,7 +727,6 @@
             }
         }
 
-        // ================== SIDEBAR NAVIGATION ==================
         function navigateMenu(menuId) {
             document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
             document.getElementById('view-input-invoice').style.display = 'none';
@@ -763,7 +746,10 @@
             }
         }
 
-        // ================== LOGIKA TAB ADD TAX ==================
+        let extractedSerial = "";
+        let extractedDate = "";
+        let extractedTax = "";
+
         function openAddTaxModal() {
             let poVal = document.getElementById('input_po').value || "6044120";
             let dcVal = document.getElementById('input_dc').value || "110";
@@ -783,10 +769,13 @@
             if (textarea.value.trim() !== "" && textarea.value !== "tax data loaded") {
                 let parts = textarea.value.split('#');
                 if(parts.length > 7) {
-                    document.getElementById('step1_serial').value = parts[4] || "";
-                    document.getElementById('step1_tanggal').value = parts[5] || "";
-                    document.getElementById('step1_ppn').value = parts[7] || "";
-                    document.getElementById('step1_ppnbm').value = parts[8] || "0,00";
+                    extractedSerial = parts[4] || "";
+                    extractedDate = parts[5] || "";
+                    extractedTax = parts[7] || "";
+                } else {
+                    extractedSerial = "04002500286882141";
+                    extractedDate = "27-AUG-2026";
+                    extractedTax = "16,854,524.00";
                 }
                 
                 textarea.value = "tax data loaded";
@@ -795,11 +784,9 @@
         }
 
         function addTaxToGrid() {
-            let serial = document.getElementById('step1_serial').value;
-            let date = document.getElementById('step1_tanggal').value;
-            let taxStr = document.getElementById('step1_ppn').value;
-
-            if(!serial) return; 
+            let serial = extractedSerial || "04002500286882141";
+            let date = extractedDate || "27-AUG-2026";
+            let taxStr = extractedTax || "16,854,524.00";
             
             let taxVal = parseFloat(taxStr.replace(/\./g, '').replace(',', '.')) || 0;
             let formattedTax = taxVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -820,10 +807,9 @@
         }
 
         function clearStep1Inputs() {
-            document.getElementById('step1_serial').value = '';
-            document.getElementById('step1_tanggal').value = '';
-            document.getElementById('step1_ppn').value = '';
-            document.getElementById('step1_ppnbm').value = '';
+            extractedSerial = "";
+            extractedDate = "";
+            extractedTax = "";
             document.getElementById('csv-data').value = '';
             document.getElementById('btn_modal_ok').disabled = true;
             document.getElementById('csv-data').focus();
@@ -847,7 +833,6 @@
             document.getElementById('modal_step2_grand_total').innerText = total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        // ================== SAVE DARI MAIN FORM ==================
         function saveTaxAndPopulate() {
             showAlertModal("Invoice dan faktur pajak berhasil disimpan.", function() {
                 closeModal('modal-add-tax');
@@ -873,9 +858,7 @@
                 
                 let finalTaxCost = document.getElementById('modal_step2_grand_total').innerText;
                 if(finalTaxCost === "0.00") {
-                    let taxStr = document.getElementById('step1_ppn').value || "0";
-                    let taxVal = parseFloat(taxStr.replace(/\./g, '').replace(',', '.')) || 0;
-                    finalTaxCost = taxVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    finalTaxCost = "16,854,524.00";
                 }
 
                 document.getElementById('main_tax_tbody').insertAdjacentHTML('afterbegin', `
@@ -904,8 +887,6 @@
 
         function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
 
-
-        // ================== UPLOAD 3 DOKUMEN & VERIFY GRID ==================
         let currentRowTarget = null;
         let uploadedDocs = { po: false, grn: false, dn: false, fp: false, inv: false };
         let isDNPending = false;
@@ -931,19 +912,11 @@
             currentRowTarget = btn.closest('tr'); 
             uploadedDocs = { po: false, grn: false, dn: false, fp: false, inv: false };
             
-            // Setting UI PO agar bisa diklik
             resetVerifyUI('po');
             document.getElementById('po-wrapper').setAttribute('onclick', "openPDFViewer('PO', '8077736')");
             document.getElementById('po-wrapper').style.cursor = 'pointer';
 
-            // Mengunci GRN secara Default saat awal Modal dibuka
-            resetVerifyUI('grn');
-            let grnWrapper = document.getElementById('grn-wrapper');
-            grnWrapper.removeAttribute('onclick'); // Menghilangkan fungsi klik
-            grnWrapper.classList.add('disabled'); // Memberikan style disabled
-            grnWrapper.style.cursor = 'not-allowed';
-
-            // MENGUNCI DN, FP, INV SECARA DEFAULT SAAT AWAL MODAL DIBUKA
+            resetVerifyUIDisabled('grn');
             resetUploadUIDisabled('dn', 'Choose file'); 
             resetUploadUIDisabled('fp', 'Choose files'); 
             resetUploadUIDisabled('inv', 'Choose file');
@@ -971,7 +944,26 @@
             statusIcon.className = 'status-icon';
         }
 
-        // FUNGSI BARU UNTUK MERESET DAN MEN-DISABLE UPLOAD DI AWAL
+        function resetVerifyUIDisabled(id) {
+            const wrapper = document.getElementById(id + '-wrapper');
+            const textEl = document.getElementById(id + '-text');
+            const iconEl = document.getElementById(id + '-icon');
+            const statusIcon = document.getElementById(id + '-status-icon');
+
+            wrapper.className = 'file-input-wrapper disabled';
+            wrapper.style.backgroundColor = '#f5f5f5';
+            wrapper.style.border = '1px solid #dce1e4';
+            wrapper.removeAttribute('onclick');
+            wrapper.style.cursor = 'not-allowed';
+
+            textEl.innerText = 'Verify Document';
+            textEl.className = 'file-input-text';
+            textEl.style.color = '#bfbfbf';
+            if(iconEl) iconEl.style.display = 'inline-block';
+            statusIcon.innerHTML = '';
+            statusIcon.className = 'status-icon';
+        }
+
         function resetUploadUIDisabled(id, text) {
             const wrapper = document.getElementById(id + '-wrapper');
             const textEl = document.getElementById(id + '-text');
@@ -990,7 +982,9 @@
             wrapper.style.justifyContent = 'space-between'; 
             wrapper.style.border = '1px solid #dce1e4';
             
-            if(!iconEl) {
+            if(iconEl) {
+                iconEl.style.display = 'inline-block'; 
+            } else {
                 const folderIcon = document.createElement('i'); folderIcon.className = "fa-regular fa-folder-open";
                 folderIcon.id = id + "-icon"; folderIcon.style.color = "#595959"; wrapper.appendChild(folderIcon);
             }
@@ -1008,7 +1002,9 @@
             textEl.classList.remove('verified-style'); textEl.style.color = '#bfbfbf';
             wrapper.style.backgroundColor = '#fff'; wrapper.style.justifyContent = 'space-between'; wrapper.style.border = '1px solid #dce1e4';
             
-            if(!iconEl) {
+            if(iconEl) {
+                iconEl.style.display = 'inline-block';
+            } else {
                 const folderIcon = document.createElement('i'); folderIcon.className = "fa-regular fa-folder-open";
                 folderIcon.id = id + "-icon"; folderIcon.style.color = "#595959"; wrapper.appendChild(folderIcon);
             }
@@ -1055,17 +1051,30 @@
             const iconEl = document.getElementById(id + '-icon');
             const statusIcon = document.getElementById(id + '-status-icon');
             
-            wrapper.removeAttribute('onclick'); wrapper.style.cursor = 'not-allowed'; wrapper.classList.add('disabled');
-            textEl.innerText = "Document Verified"; textEl.classList.add('verified-style'); textEl.style.color = "#595959";
-            wrapper.style.backgroundColor = '#f4f6f7'; wrapper.style.justifyContent = 'center';
+            wrapper.removeAttribute('onclick'); 
+            wrapper.style.cursor = 'not-allowed'; 
+            wrapper.classList.add('disabled');
             
-            if(iconEl) iconEl.remove();
-            statusIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>'; statusIcon.classList.add('status-success');
+            textEl.innerText = "Document Verified"; 
+            textEl.classList.add('verified-style'); 
+            textEl.style.color = "#595959";
+            
+            wrapper.style.backgroundColor = '#f4f6f7'; 
+            wrapper.style.justifyContent = 'center';
+            
+            if(iconEl) iconEl.style.display = 'none';
+            statusIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>'; 
+            statusIcon.classList.add('status-success');
+
+            if (id === 'dn') {
+                resetUploadUI('fp', 'Choose files');
+            } else if (id === 'fp') {
+                resetUploadUI('inv', 'Choose file');
+            }
 
             checkAllUploadsDone();
         }
 
-        // ================== LOGIKA PDF VIEWER (KHUSUS VERIFY PO & GRN) ==================
         let currentVerifyingDoc = '';
 
         function openPDFViewer(docType, poNum) {
@@ -1075,7 +1084,6 @@
             else if (docType === 'GRN') titleEl.innerText = "GOODS RECEIVING NOTE";
             
             document.getElementById('pdf-paper-po').innerText = poNum;
-            
             document.getElementById('pdf-accept-cb').checked = false;
             document.getElementById('btn-pdf-ok').disabled = true;
             
@@ -1111,51 +1119,52 @@
             const iconEl = document.getElementById(id + '-icon');
             const statusIcon = document.getElementById(id + '-status-icon');
 
-            wrapper.classList.remove('disabled'); // Pastikan disable class ilang
-            wrapper.classList.add('clickable-verified');
-            wrapper.style.backgroundColor = '#e6fdf2';
-            wrapper.style.border = '1px solid #84dcc6';
+            wrapper.classList.remove('clickable-verified');
+            wrapper.classList.add('disabled');
+            wrapper.removeAttribute('onclick');
+            wrapper.style.cursor = 'not-allowed';
+            wrapper.style.backgroundColor = '#f4f6f7';
+            wrapper.style.border = '1px solid #dce1e4';
+            wrapper.style.justifyContent = 'center';
+
             textEl.innerText = "Document Verified";
             textEl.className = "file-input-text verified-style";
+            textEl.style.color = "#595959";
+            
             if(iconEl) iconEl.style.display = 'none';
 
             statusIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
             statusIcon.className = 'status-icon status-success';
 
-            // Logika Mengaktifkan Button GRN Jika PO Selesai di-Verify
             if (id === 'po') {
+                resetVerifyUI('grn');
                 let grnWrapper = document.getElementById('grn-wrapper');
-                grnWrapper.classList.remove('disabled');
-                grnWrapper.style.cursor = 'pointer';
-                grnWrapper.style.backgroundColor = '#fff';
                 grnWrapper.setAttribute('onclick', "openPDFViewer('GRN', '8077736')");
+                grnWrapper.style.cursor = 'pointer';
             }
             
-            // LOGIKA BARU: MENGAKTIFKAN DN, FP, INV JIKA GRN SELESAI DI-VERIFY
             if (id === 'grn') {
                 resetUploadUI('dn', 'Choose file');
-                resetUploadUI('fp', 'Choose files');
-                resetUploadUI('inv', 'Choose file');
             }
 
             checkAllUploadsDone();
         }
 
-        // ================== LOGIKA DROPDOWN DI DALAM GRID MODAL (DATA SUPPLIER) ==================
+        // List pilihan dropdown
         const allSupplierOptions = [
             "PEMBERSIH LANTAI FRESH HARUM BTL 24X160ML",
             "PEMBERSIH LANTAI SEGAR LEMON 24X180ML",
-            "PEMBERSIH LANTAI FRESH LIQUID WANGI 24X200G",
+            "CAIRAN PEMBERSIH LANTAI WANGI 200G",  // <--- Diubah agar sekitar 50% mirip dengan 'PEMBERSIH LANTAI FRESH LIQUID 24X200G'
             "PELEMBUT SUPER WANGI 3X4000ML",
             "DETERJEN SUPER BERSIH 3X4000ML"
         ];
 
         let currentSelections = {
-            1: { code: "35855684", desc: "PEMBERSIH LANTAI FRESH LIQUID 24X200G", val: "" },
-            2: { code: "35851017", desc: "PEMBERSIH LANTAI FRESH 24X180ML", val: "" },
-            3: { code: "35851008", desc: "PELEMBUT SOFTENER JC 3X4500ML", val: "" },
-            4: { code: "35853293", desc: "PELEMBUT SUPER 3X4000ML", val: "PELEMBUT SUPER WANGI 3X4000ML" }, 
-            5: { code: "35855219", desc: "PEMBERSIH LANTAI BTL 24X160ML", val: "PEMBERSIH LANTAI FRESH HARUM BTL 24X160ML" } 
+            1: { code: "35855684", desc: "PEMBERSIH LANTAI FRESH LIQUID 24X200G", val: "" }, // UNMATCH by default
+            2: { code: "35851017", desc: "PEMBERSIH LANTAI FRESH 24X180ML", val: "PEMBERSIH LANTAI SEGAR LEMON 24X180ML" }, 
+            3: { code: "35851008", desc: "PELEMBUT SOFTENER JC 3X4500ML", val: "PELEMBUT SUPER WANGI 3X4000ML" }, 
+            4: { code: "35853293", desc: "PELEMBUT SUPER 3X4000ML", val: "PEMBERSIH LANTAI FRESH HARUM BTL 24X160ML" }, 
+            5: { code: "35855219", desc: "PEMBERSIH LANTAI BTL 24X160ML", val: "DETERJEN SUPER BERSIH 3X4000ML" } 
         };
 
         function closeGridModal() { document.getElementById('grid-modal').style.display = 'none'; }
@@ -1220,10 +1229,9 @@
             if (selectEl) {
                 currentSelections[rowId].val = selectEl.value; 
                 
-                // MENGUBAH SEMUA DROPDOWN LAIN AGAR OPTION INI HILANG
                 Object.keys(currentSelections).forEach(id => {
                     if (id != rowId && currentSelections[id].val === selectEl.value && selectEl.value !== "") {
-                        currentSelections[id].val = ""; // Reset opsi di baris lain jika sebelumnya milih ini
+                        currentSelections[id].val = ""; 
                     }
                 });
 
@@ -1257,13 +1265,11 @@
             }
         }
 
-        // ================== TAB UPLOAD KWITANSI ==================
         let kwitansiItems = [];
         function formatCurrency(num) { return num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
 
         function populatePoDropdown() {
             const poSelect = document.getElementById('kw_po');
-            // Menambahkan Opsi Disabled Selected Hidden (Muncul awal aja, tidak ada dalam list Dropdown Optionnya)
             poSelect.innerHTML = '<option value="" disabled selected hidden>Select Order No</option>'; 
             let poSet = new Set();
             
@@ -1284,7 +1290,6 @@
                 }
             });
 
-            // Menambahkan untuk locationnya juga
             document.getElementById('kw_loc').innerHTML = '<option value="" disabled selected hidden>Select Location</option>';
         }
 
@@ -1434,12 +1439,10 @@
             
             document.getElementById('file-kw').value = ''; document.getElementById('kw-text').innerText = 'Choose file'; document.getElementById('kw-text').style.color = '#999';
             
-            // Kita reset Dropdown Kwitansinya ke Placeholder Default.
             populatePoDropdown();
             navigateMenu('input_invoice');
         }
 
-        // ================== LOGIKA SYSDATE HASIL MATCHING & DOWNLOAD MODAL ==================
         function setSysdate() {
             const today = new Date();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
