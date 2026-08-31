@@ -400,8 +400,8 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <label style="font-size: 13px; font-weight: 600; color: #333; margin: 0;">Paste data dari efaktur/coretax/QR :</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <button class="btn btn-outline" style="border:1px solid #007bff; color:#007bff; padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="processCSV()">Process Data</button>
-                            <button class="btn btn-primary" id="btn_modal_ok" disabled style="padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="addTaxToGrid()">Add Tax</button>
+                            <!-- BUTTON PROCESS DATA DIHAPUS, ADD TAX LANGSUNG STANDBY -->
+                            <button class="btn btn-primary" id="btn_modal_ok" style="padding: 0 15px; height: 30px; font-size: 12px; border-radius: 4px;" onclick="addTaxToGrid()">Add Tax</button>
                         </div>
                     </div>
                     <textarea id="csv-data" class="textarea-box" placeholder="Paste data efaktur di sini..." style="height: 60px; margin-bottom: 0; border: 1px solid #dce1e4; box-sizing: border-box; width: 100%; display: block;"></textarea>
@@ -496,7 +496,6 @@
             <div class="ketentuan-scrollable-container">
                 <div class="ketentuan-title">Ketentuan Dokumen untuk Upload File</div>
                 <ol class="ketentuan-list">
-                    <li>Wajib mencantumkan no PO yang sesuai di delivery note</li>
                     <li><span class="ketentuan-subtitle">Invoice Sebagai Kuitansi</span> Dokumen Invoice wajib mencantumkan No. PO yang sesuai. Jika nilai pembelian di atas sama dengan Rp5.000.000, wajib menyertakan meterai elektronik (e-meterai).</li>
                     <li><span class="ketentuan-subtitle">Invoice Bukan sebagai Kuitansi</span> Dokumen Kwitansi wajib mencantumkan semua No. Invoice yang sesuai. Jika nilai pembelian di atas sama dengan Rp5.000.000, wajib menyertakan meterai elektronik (e-meterai).</li>
                     <li>Apabila mengalami kegagalan upload sebanyak 3 kali, silakan hubungi contact person terkait.</li>
@@ -505,7 +504,7 @@
         </div>
     </div>
 
-    <!-- PDF VIEWER MODAL -->
+    <!-- PDF VIEWER MODAL KHUSUS VERIFY -->
     <div class="pdf-modal-overlay" id="pdf-viewer-modal">
         <div class="pdf-modal-box">
             <div class="pdf-toolbar">
@@ -746,9 +745,9 @@
             }
         }
 
-        let extractedSerial = "";
-        let extractedDate = "";
-        let extractedTax = "";
+        // ==========================================
+        // UPDATE ADD TAX MODAL
+        // ==========================================
 
         function openAddTaxModal() {
             let poVal = document.getElementById('input_po').value || "6044120";
@@ -764,33 +763,30 @@
             document.getElementById('modal-add-tax').style.display = 'flex';
         }
 
-        function processCSV() {
+        // ADD TAX LOGIC COMBINED DENGAN PROCESS CSV (SATU TOMBOL)
+        function addTaxToGrid() {
             let textarea = document.getElementById('csv-data');
-            if (textarea.value.trim() !== "" && textarea.value !== "tax data loaded") {
+            
+            // Default Fallback
+            let serial = "04002500286882141";
+            let date = "27-AUG-2026";
+            let taxStr = "16,854,524.00";
+
+            // Proses Textarea Content Saat Klik
+            if (textarea.value.trim() !== "") {
                 let parts = textarea.value.split('#');
                 if(parts.length > 7) {
-                    extractedSerial = parts[4] || "";
-                    extractedDate = parts[5] || "";
-                    extractedTax = parts[7] || "";
-                } else {
-                    extractedSerial = "04002500286882141";
-                    extractedDate = "27-AUG-2026";
-                    extractedTax = "16,854,524.00";
+                    serial = parts[4] || serial;
+                    date = parts[5] || date;
+                    taxStr = parts[7] || taxStr;
                 }
-                
-                textarea.value = "tax data loaded";
-                document.getElementById('btn_modal_ok').disabled = false;
             }
-        }
-
-        function addTaxToGrid() {
-            let serial = extractedSerial || "04002500286882141";
-            let date = extractedDate || "27-AUG-2026";
-            let taxStr = extractedTax || "16,854,524.00";
             
+            // Format Numbering
             let taxVal = parseFloat(taxStr.replace(/\./g, '').replace(',', '.')) || 0;
             let formattedTax = taxVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+            // Insert Row
             let tbody = document.getElementById('modal_step2_tbody');
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
@@ -801,17 +797,14 @@
                     <td><button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteTaxRow(this)">Delete</button></td>
                 </tr>
             `);
+            
             calculateGrandTotal();
             clearStep1Inputs();
             document.getElementById('btn_modal_ok_next').disabled = false;
         }
 
         function clearStep1Inputs() {
-            extractedSerial = "";
-            extractedDate = "";
-            extractedTax = "";
             document.getElementById('csv-data').value = '';
-            document.getElementById('btn_modal_ok').disabled = true;
             document.getElementById('csv-data').focus();
         }
 
@@ -1150,17 +1143,16 @@
             checkAllUploadsDone();
         }
 
-        // List pilihan dropdown
         const allSupplierOptions = [
             "PEMBERSIH LANTAI FRESH HARUM BTL 24X160ML",
             "PEMBERSIH LANTAI SEGAR LEMON 24X180ML",
-            "CAIRAN PEMBERSIH LANTAI WANGI 200G",  // <--- Diubah agar sekitar 50% mirip dengan 'PEMBERSIH LANTAI FRESH LIQUID 24X200G'
+            "CAIRAN PEMBERSIH LANTAI WANGI 200G",  
             "PELEMBUT SUPER WANGI 3X4000ML",
             "DETERJEN SUPER BERSIH 3X4000ML"
         ];
 
         let currentSelections = {
-            1: { code: "35855684", desc: "PEMBERSIH LANTAI FRESH LIQUID 24X200G", val: "" }, // UNMATCH by default
+            1: { code: "35855684", desc: "PEMBERSIH LANTAI FRESH LIQUID 24X200G", val: "" }, 
             2: { code: "35851017", desc: "PEMBERSIH LANTAI FRESH 24X180ML", val: "PEMBERSIH LANTAI SEGAR LEMON 24X180ML" }, 
             3: { code: "35851008", desc: "PELEMBUT SOFTENER JC 3X4500ML", val: "PELEMBUT SUPER WANGI 3X4000ML" }, 
             4: { code: "35853293", desc: "PELEMBUT SUPER 3X4000ML", val: "PEMBERSIH LANTAI FRESH HARUM BTL 24X160ML" }, 
